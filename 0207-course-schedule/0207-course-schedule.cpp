@@ -1,50 +1,50 @@
 class Solution {
-public:
-    bool canFinish(int n, vector<vector<int>>& g) {
-        vector<int> adj[n];
-        
-        for(auto it : g)
+    bool dfs(int node,vector<int>&vis,vector<int> adj[],vector<int>&path)
+    {
+        vis[node]=1;
+        path[node]=1;
+
+        for(auto it : adj[node])
         {
-            int v=it[0];
+            if(vis[it]==0)
+            {
+                if(dfs(it,vis,adj,path))
+                    return true;
+            }
+            else if(vis[it]==1 && path[it]==1)
+            {
+                return true;
+            }
+        }
+        path[node]=0;
+        return false;
+    }
+public:
+    bool canFinish(int numCourses, vector<vector<int>>& mat) {
+        
+        int n=numCourses;
+        vector<int> adj[n];
+        vector<int> vis(n,0);
+        vector<int> path(n,0);
+        int count=0;
+        for(auto it : mat)
+        {
             int u=it[1];
+            int v=it[0];
+            
             adj[u].push_back(v);
         }
         
-        queue<int> q;
-	    int ans=0;
-	    vector<int> indegree(n,0);
-	    
-	    for(int i=0;i<n;i++)
-	    {
-	        for(auto it : adj[i])
-	        {
-	            indegree[it]++;
-	        }
-	    }
-	    
-	    for(int i=0;i<n;i++)
-	    {
-	        if(indegree[i]==0)
-	        q.push(i);
-	    }
-	    
-	    while(!q.empty())
-	    {
-	        int node=q.front();
-	        q.pop();
-	        ans++;
-	        
-	        for(auto it : adj[node])
-	        {
-	            indegree[it]--;
-	            if(indegree[it]==0)
-	            q.push(it);
-	        }
-	    }
-        if(ans==n)
-            return true;
-        else
-            return false;
+        for(int i=0;i<n;i++)
+        {
+            if(!vis[i])
+            {
+                if(dfs(i,vis,adj,path))
+                    return false;
+            }
+        }
+        return true;
+        
         
     }
 };
