@@ -2,25 +2,24 @@ class Solution {
 public:
     int minSwaps(vector<int>& nums) {
         int size=0;
-        vector<int> temp=nums;
-        
+     
         for(auto it : nums)
         {
             if(it==1)
                 size++;
-           temp.push_back(it);
         }
+        
         if(size==0)
             return 0;
         
         int i=0,j=0,n=nums.size()*2;
-        
+        int mod=nums.size();
         int swap=0;
         int ans=INT_MAX;
 
-        while(j<n)
+        while(j<n*2)
         {
-            if(temp[j]==0)
+            if(nums[j%mod]==0)
             {
                 swap++;
             }
@@ -30,7 +29,7 @@ public:
             }
             while(j-i+1>=size)
             {
-                if(temp[i]==0)
+                if(nums[i%mod]==0)
                     swap--;
                 i++;
             }
