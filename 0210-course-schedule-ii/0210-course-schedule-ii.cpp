@@ -1,49 +1,48 @@
 class Solution {
-public:
-    vector<int> findOrder(int n, vector<vector<int>>& g) {
-        vector<int> adj[n];
-        
-        for(auto it : g)
+    bool dfs(int node,vector<int> adj[],vector<int>&vis,stack<int>&st,vector<int>&path)
+    {
+        vis[node]=1;
+        path[node]=1;
+        for(auto it : adj[node])
         {
-            int v=it[0];
-            int u=it[1];
-            adj[u].push_back(v);
+            if(!vis[it])
+            {
+                if(dfs(it,adj,vis,st,path)==true)
+                    return true;
+            }
+            else if(path[it]==1)
+                return true;
+        }
+        path[node]=0;
+        st.push(node);
+        return false;
+    }
+public:
+    vector<int> findOrder(int n, vector<vector<int>>& arr) {
+        vector<int> adj[n];
+        for(auto it : arr)
+        {
+            adj[it[1]].push_back(it[0]);
+        }
+        vector<int> vis(n,0);
+        vector<int> path(n,0);
+        stack<int> st;
+        vector<int> ans;
+        
+        for(int i=0;i<n;i++)
+        {
+            if(!vis[i])
+                if(dfs(i,adj,vis,st,path)==true)
+                    return ans;
         }
         
-        queue<int> q;
-	    vector<int> ans;
-	    vector<int> indegree(n,0);
-	    
-	    for(int i=0;i<n;i++)
-	    {
-	        for(auto it : adj[i])
-	        {
-	            indegree[it]++;
-	        }
-	    }
-	    
-	    for(int i=0;i<n;i++)
-	    {
-	        if(indegree[i]==0)
-	        q.push(i);
-	    }
-	    
-	    while(!q.empty())
-	    {
-	        int node=q.front();
-	        q.pop();
-	        ans.push_back(node);
-	        
-	        for(auto it : adj[node])
-	        {
-	            indegree[it]--;
-	            if(indegree[it]==0)
-	            q.push(it);
-	        }
-	    }
-        if(ans.size()==n)
+    
+            while(!st.empty())
+            {
+                ans.push_back(st.top());
+                st.pop();
+            }
             return ans;
-        else
-            return {};
+        
     }
 };
