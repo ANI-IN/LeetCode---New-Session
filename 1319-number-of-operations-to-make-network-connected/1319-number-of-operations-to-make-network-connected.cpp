@@ -2,82 +2,75 @@ class DSU{
     public:
     vector<int> parent;
     vector<int> rank;
-        
-    DSU(int n)
-    {
-        parent.resize(n+1);
-        rank.resize(n+1,0);
-        
-        for(int i=0;i<=n;i++)
-        {
-            parent[i]=i;
-        }
-    }
     
-    int findparent(int x)
-    {
-        if(parent[x]==x)
-            return x;
-        
-        return parent[x]=findparent(parent[x]);
-    }
-    
-    void unionbyrank(int u, int v)
-    {
-        int upu=findparent(u);
-        int upv=findparent(v);
-        
-        if(upu == upv)
-            return;
-        if(rank[upu] < rank[upv])
-        {
-            parent[upu]=upv;
-        }
-        else if(rank[upu] > rank[upv])
-        {
-            parent[upv]=upu;
-        }
-        else
-        {
-            parent[upu]=upv;
-            rank[upv]+=1;
-        }
-    }
+      DSU(int n)
+      {
+          parent.resize(n);
+          rank.resize(n,0);
+          for(int i=0;i<n;i++)
+          parent[i]=i;
+      }
+      
+      int find(int x)
+      {
+          if(x==parent[x])
+          return x;
+          
+          return parent[x]=find(parent[x]);
+      }
+      
+      void un(int x, int y)
+      {
+          int px=find(x);
+          int py=find(y);
+          
+          if(px==py)
+          return;
+          
+          if(rank[px] < rank[py])
+          {
+              parent[px]=py;
+          }
+          else if(rank[px] > rank[py])
+          {
+              parent[py]=px;
+          }
+          else
+          {
+              parent[px]=py;
+              rank[py]++;
+          }
+      }
 };
+
 
 class Solution {
 public:
-    int makeConnected(int n, vector<vector<int>>& connections) {
-        DSU ds(n);
-        
+    int makeConnected(int n, vector<vector<int>>& c) {
         int extra=0;
-         for(auto it : connections)
+        DSU ds(n);
+        for(auto it : c)
         {
             int u=it[0];
             int v=it[1];
             
-            if(ds.findparent(u)==ds.findparent(v))
-            {
+            if(ds.find(u)==ds.find(v))
                 extra++;
-            }
             else
-            {
-                ds.unionbyrank(u,v);
-            }
+                ds.un(u,v);
         }
         
-        int c=0;
+        int left=0;
         for(int i=0;i<n;i++)
         {
             if(ds.parent[i]==i)
-                c++;
+                left++;
         }
-        c=c-1;
+        left--;
         
-        if(extra>=c)
-            return  c;
+        if(left<=extra)
+            return left;
         else
             return -1;
-        
-        }
+    }
 };
