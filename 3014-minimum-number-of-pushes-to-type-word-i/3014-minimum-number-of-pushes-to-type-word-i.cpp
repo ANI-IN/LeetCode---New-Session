@@ -1,42 +1,21 @@
 class Solution {
 public:
     int minimumPushes(string word) {
-        int n=word.size();
-        
-        unordered_map<char,int> m;
-        
-        int ans=0;
-        int count=0;
+        vector<int> arr(26,0);
         for(int i=0;i<word.size();i++)
         {
-            char c=word[i];
-            
-            if(m.find(c)==m.end())
-            {
-                if(count>=0 && count<8)
-                {
-                    m[c]=1;
-                }
-                else if(count>=8 && count<16)
-                {
-                    m[c]=2;
-                }
-                else if(count>=16 && count<24)
-                {
-                    m[c]=3;
-                }
-                else
-                {
-                    m[c]=4;
-                }
-                count++;
-            }
+            arr[word[i]-'a']++;
         }
         
-        for(auto it : word)
+        sort(arr.begin(),arr.end(),greater<int>());
+        int sum=0;
+        
+        for(int i=0;i<26;i++)
         {
-            ans=ans+m[it];
+            int freq=arr[i];
+            int press=(i/8)+1;
+            sum+=press*freq;
         }
-        return ans;
+        return sum;
     }
 };
