@@ -1,37 +1,30 @@
 class Solution {
-    
-    int solve(vector<vector<int>>&stones, int index, int &n, vector<bool>&visited)
+    int dfs(int index, vector<int>&vis,vector<vector<int>>&stones)
     {
-        visited[index]=true;       //Every time new stone visited marked it as true 
+        vis[index]=1;
         int res=0;
-        
-        for(int i=0;i<n;i++)
+        for(int i=0;i<stones.size();i++)
         {
-            if( visited[i]==false &&  (stones[i][0]==stones[index][0] || stones[i][1] == stones[index][1]))     //check if it shares either the same row or the same column 
+            if(!vis[i] && (stones[index][0] == stones[i][0] || stones[index][1]==stones[i][1]))
             {
-                res=res+(solve(stones,i,n,visited)+1);
+                res=res+dfs(i,vis,stones)+1;
             }
         }
         return res;
     }
 public:
     int removeStones(vector<vector<int>>& stones) {
-        
         int n=stones.size();
-        
-        vector<bool> visited(n,0); // Initially all are set to false
+        vector<int> vis(n,0);
         
         int ans=0;
-        
-        for(int i=0;i<n;i++)    // check for all stones
+        for(int i=0;i<n;i++)
         {
-            if(!visited[i])   // if not visited call the function 
+            if(!vis[i])
             {
-                ans=ans+solve(stones,i,n,visited);
+                ans+=dfs(i,vis,stones);
             }
         }
-        
         return ans;
-        
     }
 };
