@@ -1,24 +1,34 @@
 class Solution {
-    int solve(int currA, int clip, int n,vector<vector<int>>&dp)
-    {
-        if(currA==n)
-            return 0;
-        if(currA>n)
-            return 1e9;
-        
-        if(dp[currA][clip]!=-1)
-            return dp[currA][clip];
-        
-        int copypaste=1+1+solve(currA+currA,currA,n,dp);
-        int paste=1+solve(currA+clip,clip,n,dp);
-        
-        return dp[currA][clip]=min(copypaste,paste);
-    }
 public:
     int minSteps(int n) {
-        if(n==1)
-            return 0;
-        vector<vector<int>> dp(1001,vector<int>(1001,-1));
-        return 1+solve(1,1,n,dp);
+        vector<int> dp(1001,0);
+        
+        dp[0]=0;
+        dp[1]=0;
+        dp[2]=2;
+        dp[3]=3;
+        
+        for(int i=4;i<=n;i++)
+        {
+            int factor=i/2;
+            
+            while(factor>=1)
+            {
+                if(i%factor==0)
+                {
+                    int y=dp[factor];
+                    int copy=1;
+                    int paste=(i/factor)-1;
+                    
+                    dp[i]=y+copy+paste;
+                    break;
+                }
+                else
+                {
+                    factor--;
+                }
+            }
+        }
+        return dp[n];
     }
 };
