@@ -1,94 +1,82 @@
 class Solution {
-public:
-    const int INF = 2e9;
+    typedef long long ll;
+    const int LARGE_VALUE = 2e9;
+    typedef pair<long, long> P;
+ll DijkstraAlgo(int n, vector<vector<int>>& edges,  int src, int dest) {
+        //make the graph excluing -1 et edges
+        unordered_map<ll, vector<pair<ll, ll>>> adj; //u -> (v, wt)
 
-    vector<vector<int>> modifiedGraphEdges(int nodeCount,
-                                           vector<vector<int>>& edges,
-                                           int source, int destination,
-                                           int target) {
-        // Step 1: Compute the initial shortest distance from source to
-        // destination
-        long long currentShortestDistance =
-            runDijkstra(edges, nodeCount, source, destination);
+        for(vector<int>& edge : edges) {
+            if(edge[2] != -1) {
+                int u  = edge[0];
+                int v  = edge[1];
+                int wt = edge[2];
 
-        // If the current shortest distance is less than the target, return an
-        // empty result
-        if (currentShortestDistance < target) return {};
+                adj[u].push_back({v, wt});
+                adj[v].push_back({u, wt});
+            }
+        }
 
-        bool matchesTarget = (currentShortestDistance == target);
+        priority_queue<P, vector<P>, greater<P>> pq;
+        vector<ll> result(n, INT_MAX); //result[i] = shortest path distance of src to ith node
+        //vector<bool> visited(n, false); //YOU DON"T NEED VISITED ARRAY BECAUSE ANYWAYS YOU WILL NOT VISIT SAME NODE AS IT's DISTANCE WILL BE INCREASED NEXT TIME DIJKSTRA YOU WILL SKIP IT
 
-        // Step 2: Iterate through each edge to adjust its weight if necessary
-        for (vector<int>& edge : edges) {
-            // Skip edges that already have a positive weight
-            if (edge[2] > 0) continue;
+        result[src] = 0; //src to src distance is 0
+        pq.push({0, src});
 
-            // Set edge weight to a large value if current distance matches
-            // target else set to 1
-            edge[2] = matchesTarget ? INF : 1;
+        while(!pq.empty()) {
+            ll currDist = pq.top().first;
+            ll currNode = pq.top().second;
+            pq.pop();
 
-            // Step 3: If current shortest distance does not match target
-            if (!matchesTarget) {
-                // Compute the new shortest distance with the updated edge
-                // weight
-                long long newDistance =
-                    runDijkstra(edges, nodeCount, source, destination);
-                // If the new distance is within the target range, update edge
-                // weight to match target
-                if (newDistance <= target) {
-                    matchesTarget = true;
-                    edge[2] += target - newDistance;
+            /*We don't need visited vector in Dijkstra
+            if(visited[currNode] == true) {
+                continue;
+            }
+            visited[currNode] = true;
+            */
+
+            for(auto&[nbr, wt] : adj[currNode]) {
+                if(result[nbr] > currDist + wt) {
+                    result[nbr] = currDist + wt;
+                    pq.push({result[nbr], nbr});
                 }
             }
         }
 
-        // Return modified edges if the target distance is achieved, otherwise
-        // return an empty result
-        return matchesTarget ? edges : vector<vector<int>>{};
+        return result[dest];
     }
 
-    // Dijkstra's algorithm to find the shortest path distance
-    long long runDijkstra(const vector<vector<int>>& edges, int nodeCount,
-                          int sourceNode, int destinationNode) {
-        // Step 1: Initialize adjacency matrix and distance arrays
-        vector<vector<long long>> adjMatrix(nodeCount,
-                                            vector<long long>(nodeCount, INF));
-        vector<long long> minDistance(nodeCount, INF);
-        vector<bool> visited(nodeCount, false);
+public:
+    vector<vector<int>> modifiedGraphEdges(int n, vector<vector<int>>& edges, int source, int destination, int target) {
+        ll currShortestDist = DijkstraAlgo(n,edges,  source, destination);
 
-        // Set the distance to the source node as 0
-        minDistance[sourceNode] = 0;
-
-        // Step 2: Fill the adjacency matrix with edge weights
-        for (const vector<int>& edge : edges) {
-            if (edge[2] != -1) {
-                adjMatrix[edge[0]][edge[1]] = edge[2];
-                adjMatrix[edge[1]][edge[0]] = edge[2];
-            }
+        if(currShortestDist < target) {
+            return {};
         }
 
-        // Step 3: Perform Dijkstra's algorithm
-        for (int i = 0; i < nodeCount; ++i) {
-            // Find the nearest unvisited node
-            int nearestUnvisitedNode = -1;
-            for (int j = 0; j < nodeCount; ++j) {
-                if (!visited[j] &&
-                    (nearestUnvisitedNode == -1 ||
-                     minDistance[j] < minDistance[nearestUnvisitedNode])) {
-                    nearestUnvisitedNode = j;
+        bool matchedTarget = (currShortestDist == target);
+
+        for(vector<int>& edge : edges) {
+            if(edge[2] == -1) {
+
+                edge[2] = (matchedTarget == true) ? LARGE_VALUE : 1; //assign lowest number i.e. 1
+
+                if(matchedTarget != true) {
+                    ll newShortestDist = DijkstraAlgo( n,edges, source, destination);
+
+                    if(newShortestDist <= target) {
+                        matchedTarget = true;
+                        edge[2] += (target - newShortestDist);
+                    }
                 }
             }
-            // Mark the nearest node as visited
-            visited[nearestUnvisitedNode] = true;
-
-            // Update the minimum distance for each adjacent node
-            for (int v = 0; v < nodeCount; ++v) {
-                minDistance[v] =
-                    min(minDistance[v], minDistance[nearestUnvisitedNode] +
-                                            adjMatrix[nearestUnvisitedNode][v]);
-            }
         }
 
-        // Return the shortest distance to the destination node
-        return minDistance[destinationNode];
+        if(matchedTarget == false) {
+            return {};
+        }
+        return edges;
+       
     }
 };
