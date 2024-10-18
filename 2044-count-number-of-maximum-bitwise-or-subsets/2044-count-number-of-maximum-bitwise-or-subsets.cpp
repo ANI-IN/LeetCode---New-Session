@@ -1,31 +1,33 @@
 class Solution {
-    void solve(int index,vector<int>&nums,int current_or, int maximum_or, int &count)
+    int solve(int index,vector<int>&nums,int current_or, int maximum_or,vector<vector<int>> &dp)
     {
         if (index == nums.size()) {
             if (current_or == maximum_or) {
-                count++;
+                return 1;
             }
-            return;
+            return 0 ;
         }
         
-         
-        solve(index + 1, nums, current_or | nums[index], maximum_or, count);
+        if(dp[index][current_or]!=-1)
+            return dp[index][current_or];
         
-         
-        solve(index + 1, nums, current_or, maximum_or, count);
+        int take = solve(index + 1, nums, current_or | nums[index], maximum_or, dp);
+        int not_take = solve(index + 1, nums, current_or, maximum_or, dp);
+        
+        return dp[index][current_or] = take + not_take;
     }
 public:
     int countMaxOrSubsets(vector<int>& nums) {
         int maximum_or=0;
-        
+        int n=nums.size();
         for(auto it : nums)
         {
             maximum_or = maximum_or | it;
         }
-        int count=0;
-        int n=nums.size();
         
-        solve(0,nums,0,maximum_or,count);
-        return count;
+         
+        vector<vector<int>> dp(n+1,vector<int>(maximum_or+1,-1));
+        return solve(0,nums,0,maximum_or,dp);
+         
     }
 };
