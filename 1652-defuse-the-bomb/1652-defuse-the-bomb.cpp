@@ -6,28 +6,34 @@ public:
         if(k==0)
             return ans;
         
-        for(int i=0;i<n;i++)
+        int i=-1,j=-1;
+        if(k<0)
         {
-            if(k<0)
-            {
-                int sum=0;
-                for(int j=i-abs(k) ; j<i ; j++)
-                {
-                    sum=sum+code[(j+n)%n];
-                }
-                ans[i]=sum;
-            }
-            else
-            {
-                int sum=0;
-                for(int j=i+1;j<i+k+1;j++)
-                {
-                    sum+=code[(j)%n];
-                }
-                ans[i]=sum;
-            }
+            i=n-abs(k);
+            j=n-1;
+        }
+        else
+        {
+            i=1;
+            j=k;
+        }
+        
+        int sum=0;
+        for(int z=i;z<=j;z++)
+        {
+            sum+=code[z];
+        }
+        
+        for(int x=0 ; x<n ; x++)
+        {
+            ans[x]=sum;
+            
+            sum = sum - code[i%n];
+            i++;
+            
+            sum = sum + code[(j+1)%n];
+            j++;
         }
         return ans;
-        
     }
 };
