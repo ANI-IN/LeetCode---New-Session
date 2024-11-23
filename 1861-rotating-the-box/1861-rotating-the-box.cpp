@@ -25,31 +25,21 @@ public:
         
         for(int j=0;j<m;j++)
         {
+            int index=n-1;
             for(int i=n-1;i>=0;i--)
             {
-                if(ans[i][j]=='.')
+                if(ans[i][j]=='*')
                 {
-                    int index=-1;
-                    
-                    for(int k=i-1; k>=0 ;k--)
-                    {
-                        if(ans[k][j]=='*')
-                            break;
-                        else if(ans[k][j]=='#')
-                        {
-                            index  = k;
-                            break;
-                        }
-                    }
-                    
-                    if(index!=-1)
-                    {
-                        ans[i][j]='#';
-                        ans[index][j]='.';
-                    }
+                    index=i-1;
+                    continue;
                 }
                 
-                
+                if(ans[i][j]=='#')
+                {
+                    ans[i][j]='.';
+                    ans[index][j]='#';
+                    index--;
+                }
             }
         }
         
