@@ -1,55 +1,48 @@
 class Solution {
-public:
-    vector<bool> isArraySpecial(vector<int>& nums,
-                                vector<vector<int>>& queries) {
-        vector<bool> ans(queries.size());
-        vector<int> violatingIndices;
-
-        for (int i = 1; i < nums.size(); i++) {
-            // same parity, found violating index
-            if (nums[i] % 2 == nums[i - 1] % 2) {
-                violatingIndices.push_back(i);
+    bool solve(int start, int end, vector<int>&index)
+    {
+         int low=0,high=index.size()-1;
+        
+        while(low<=high)
+        {
+            int mid= low + (high-low)/2;
+            int i = index[mid];
+            
+            if(i < start)
+            {
+                low = mid + 1;
             }
-        }
-
-        for (int i = 0; i < queries.size(); i++) {
-            vector<int> query = queries[i];
-            int start = query[0];
-            int end = query[1];
-
-            bool foundViolatingIndex =
-                binarySearch(start + 1, end, violatingIndices);
-
-            if (foundViolatingIndex) {
-                ans[i] = false;
-            } else {
-                ans[i] = true;
+            else if(i> end)
+            {
+                high = mid-1;
             }
-        }
-
-        return ans;
-    }
-
-private:
-    bool binarySearch(int start, int end, vector<int>& violatingIndices) {
-        int left = 0;
-        int right = violatingIndices.size() - 1;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            int violatingIndex = violatingIndices[mid];
-
-            if (violatingIndex < start) {
-                // check right half
-                left = mid + 1;
-            } else if (violatingIndex > end) {
-                // check left half
-                right = mid - 1;
-            } else {
-                // violatingIndex falls in between start and end
+            else
                 return true;
-            }
         }
-
         return false;
+    }
+public:
+    vector<bool> isArraySpecial(vector<int>& nums, vector<vector<int>>& queries) {
+        vector<bool> ans;
+        vector<int> index;
+        
+        for(int i=1;i<nums.size();i++)
+        {
+            if(nums[i]%2==nums[i-1]%2)
+                index.push_back(i);
+        }
+        
+        for(int i=0;i<queries.size();i++)
+        {
+            int start=queries[i][0];
+            int end=queries[i][1];
+            
+            bool result = solve(start+1,end,index);
+            if(result)
+                ans.push_back(false);
+            else
+                ans.push_back(true);
+        }
+        return ans;
     }
 };
