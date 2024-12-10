@@ -3,16 +3,18 @@ public:
     int maximumLength(string s) {
      int n=s.size();
         
-        unordered_map<string,int> m;
+        map<pair<char, int>, int> m;
         for(int i=0;i<n;i++)
         {
+            char c=s[i];
             string curr="";
+            int len=0;
             for(int j=i;j<n;j++)
             {
-                if(curr.empty() || curr.back()==s[j])
+                if(c == s[j])
                 {
-                    curr.push_back(s[j]);
-                    m[curr]++;
+                    len++;
+                    m[{c,len}]++;
                 }
                 else
                 {
@@ -24,10 +26,10 @@ public:
         int ans=0;
         for(auto it : m)
         {
-            string str=it.first;
-            if(it.second>=3 && str.size()>ans)
+            int len=it.first.second;
+            if(it.second>=3 && len>ans)
             {
-                ans=str.size();
+                ans=len;
             }
         }
         return ans==0?-1:ans;
