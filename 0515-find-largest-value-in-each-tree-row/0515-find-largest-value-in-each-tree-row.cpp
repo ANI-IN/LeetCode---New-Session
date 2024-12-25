@@ -10,38 +10,32 @@
  * };
  */
 class Solution {
-    void solve(TreeNode *root, int depth,unordered_map<int,int>&m)
-    {
-        if(root==NULL)
-            return;
-        
-         if(m.find(depth)==m.end())
-         {
-             m[depth] = root->val;
-         }
-         else
-         {
-             m[depth] = max(m[depth] , root->val);
-         }
-            
-            
-            solve(root->left,depth+1,m);
-            solve(root->right,depth+1,m);
-    }
 public:
     vector<int> largestValues(TreeNode* root) {
-        unordered_map<int,int> m;
-        int depth=0;
+        if (!root) return {};
         
-        solve(root,depth,m);
+        queue<TreeNode *>q;
+        q.push(root);
+        vector<int> ans;
         
-        
-        vector<int> ans(m.size());
-        for(int i=0;i<m.size();i++)
+        while(!q.empty())
         {
-            int val = m[i];
-            ans[i]=val;
+            int size=q.size();
+            int maxi=INT_MIN;;
+            for(int i=0;i<size;i++)
+            {
+                TreeNode *curr=q.front();
+                q.pop();
+                maxi=max(maxi,curr->val);
+                
+                if(curr->left)
+                    q.push(curr->left);
+                if(curr->right)
+                    q.push(curr->right);
+            }
+            ans.push_back(maxi);
         }
         return ans;
+        
     }
 };
