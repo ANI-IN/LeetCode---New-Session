@@ -1,25 +1,28 @@
 class Solution {
-    int count = 0;
-    void findArrangements(int pos, int n, vector<bool>& used) {
-    if (pos > n) { 
-        count++;  // Found a valid arrangement
-        return;
-    }
+    int count=0;
+    void solve(int pos, int n, vector<bool>&vis)
+    {
+        if(pos>n)
+        {
+            count++;
+            return;
+        }
 
-    for (int num = 1; num <= n; num++) {
-        if (!used[num] && (num % pos == 0 || pos % num == 0)) { 
-            used[num] = true;  // Mark number as used
-            findArrangements(pos + 1, n, used);
-            used[num] = false;  // Backtrack
+        for(int i=1;i<=n;i++)
+        {
+            if(!vis[i] && (i%pos==0 || pos%i==0))
+            {
+                vis[i]=true;
+                solve(pos+1,n,vis);
+                vis[i]=false;
+            }
         }
     }
-}
-
 public:
     int countArrangement(int n) {
-         vector<bool> used(n + 1, false);
-            count = 0;
-            findArrangements(1, n, used);
-            return count;
+        vector<bool> vis(n+1,false);
+
+        solve(1,n,vis);
+        return count;
     }
 };
