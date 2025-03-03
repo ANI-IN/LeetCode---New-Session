@@ -2,34 +2,40 @@ class Solution {
 public:
     vector<int> pivotArray(vector<int>& nums, int pivot) {
         int n=nums.size();
-        vector<int> greater;
-        vector<int> less;
-        vector<int> eq;
-
-        for(int i=0;i<n;i++)
+        int g=0,e=0,l=0;
+        for(auto it : nums)
         {
-            if(nums[i]<pivot)
+            if(it < pivot)
+            l++;
+            else if(it==pivot)
+            e++;
+            else
+            g++;
+        }
+
+        cout<<l<<e<<g;
+
+        int i=0,j=l,z=l+e;
+
+        vector<int> ans(n);
+        for(auto it : nums)
+        {
+            if(it < pivot)
             {
-                less.push_back(nums[i]);
+                ans[i]=it;
+                i++;
             }
-            else if(nums[i]==pivot)
+            else if(it==pivot)
             {
-                eq.push_back(nums[i]);
+                ans[j]=it;
+                j++;
             }
             else
             {
-                greater.push_back(nums[i]);
+                ans[z]=it;
+                z++;
             }
         }
-
-        vector<int> ans;
-        for(auto it : less)
-        ans.push_back(it);
-        for(auto it : eq)
-        ans.push_back(it);
-        for(auto it : greater)
-        ans.push_back(it);
-
         return ans;
     }
 };
