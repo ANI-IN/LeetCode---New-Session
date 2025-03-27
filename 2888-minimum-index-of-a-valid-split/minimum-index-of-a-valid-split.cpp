@@ -41,7 +41,7 @@ public:
             }
 
             laste = count - firste;
-            if(firste > first/2 && laste > last/2)
+            if(firste*2 > first && laste*2 > last)
             return i;
         }
         return -1;
