@@ -1,59 +1,56 @@
 class Solution {
 public:
     vector<int> maxPoints(vector<vector<int>>& grid, vector<int>& queries) {
-        int rowCount = grid.size(), colCount = grid[0].size();
-        vector<int> result(queries.size(), 0);
-        // Directions for movement (right, down, left, up)
-        vector<pair<int, int>> DIRECTIONS = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-
-        // Store queries along with their original indices to restore order
-        // later
-        vector<pair<int, int>> sortedQueries;
-        for (int index = 0; index < queries.size(); index++) {
-            sortedQueries.push_back({queries[index], index});
+        int n=grid.size();
+        int m=grid[0].size();
+        int dr[] = {0,-1,0,+1};
+        int dc[] = {-1,0,+1,0};
+        vector<int> ans(queries.size(),0);
+        vector<vector<int>> visited(n,vector<int>(m,0));
+        vector<pair<int,int>> vc;
+        priority_queue<pair<int,pair<int,int>> ,vector<pair<int,pair<int,int>> >,greater<pair<int,pair<int,int>> > > q;
+        
+        
+        for(int i=0;i<queries.size();i++)
+        {
+            vc.push_back({queries[i],i});
         }
-        // Sort queries by value in ascending order
-        sort(sortedQueries.begin(), sortedQueries.end());
+        sort(vc.begin(),vc.end());
+q.push({grid[0][0],{0,0}});
+        
+        visited[0][0]=1;
 
-        // Min-heap (priority queue) to process cells in increasing order of
-        // value
-        priority_queue<pair<int, pair<int, int>>,
-                       vector<pair<int, pair<int, int>>>, greater<>>
-            minHeap;
-        vector<vector<bool>> visited(rowCount, vector<bool>(colCount, false));
-        // Keeps track of the number of cells processed
-        int totalPoints = 0;
-        // Start from the top-left cell
-        minHeap.push({grid[0][0], {0, 0}});
-        visited[0][0] = true;
+        int res=0;
 
-        // Process queries in sorted order
-        for (auto [queryValue, queryIndex] : sortedQueries) {
-            // Expand the cells that are smaller than the current query value
-            while (!minHeap.empty() && minHeap.top().first < queryValue) {
-                auto [cellValue, position] = minHeap.top();
-                minHeap.pop();
-                int currentRow = position.first, currentCol = position.second;
-                // Increment count of valid cells
-                totalPoints++;
+        for(int i=0;i<vc.size();i++)
+        {   
+            int val = vc[i].first;
+            int index = vc[i].second;
+            while(!q.empty() && q.top().first < val)
+            {
+                int r = q.top().second.first;
+                int c = q.top().second.second;
+                q.pop();
 
-                // Explore all four possible directions
-                for (auto [rowOffset, colOffset] : DIRECTIONS) {
-                    int newRow = currentRow + rowOffset,
-                        newCol = currentCol + colOffset;
+                res++;
 
-                    // Check if the new cell is within bounds and not visited
-                    if (newRow >= 0 && newCol >= 0 && newRow < rowCount &&
-                        newCol < colCount && !visited[newRow][newCol]) {
-                        minHeap.push({grid[newRow][newCol], {newRow, newCol}});
-                        // Mark as visited
-                        visited[newRow][newCol] = true;
+                for(int j=0;j<4;j++)
+                {
+                    int nr = r + dr[j];
+                    int nc = c + dc[j];
+
+                    if(nr>=0 && nr<n && nc>=0 && nc<m &&  !visited[nr][nc])
+                    {
+                        visited[nr][nc]=1;
+                        q.push({grid[nr][nc],{nr,nc}});
                     }
                 }
             }
-            // Store the result for this query
-            result[queryIndex] = totalPoints;
+
+            ans[index]= res;
+
         }
-        return result;
+        return ans;
+              
     }
 };
