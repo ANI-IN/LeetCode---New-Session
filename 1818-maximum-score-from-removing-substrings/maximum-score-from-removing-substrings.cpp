@@ -1,31 +1,21 @@
 class Solution {
     string solve(string str, string pattern)
     {
-        stack<char> st;
-        int count=0;
-        int n=str.size();
+        int i =0;
 
-        for(int i=0;i<n;i++)
+        for(int j=0;j<str.size();j++)
         {
-            if(!st.empty() && st.top()==pattern[0] && str[i]==pattern[1])
+            str[i] = str[j];
+            i++;
+
+            if(i>=2 && str[i-2]==pattern[0] && str[i-1]==pattern[1])
             {
-                st.pop();
-            }
-            else
-            {
-                st.push(str[i]);
+                i=i-2;
             }
         }
 
-        string temp = "";
-        while(!st.empty())
-        {
-            temp.push_back(st.top());
-            st.pop();
-        }
-
-        reverse(temp.begin(),temp.end());
-        return temp;
+        str.erase(begin(str)+i,end(str));
+        return str;
     }
 public:
     int maximumGain(string s, int x, int y) {
