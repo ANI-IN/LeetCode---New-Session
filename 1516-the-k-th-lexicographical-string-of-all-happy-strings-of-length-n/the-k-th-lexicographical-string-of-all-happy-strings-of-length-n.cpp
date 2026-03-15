@@ -1,37 +1,30 @@
 class Solution {
 public:
     string getHappyString(int n, int k) {
-        string currentString = "";
-        vector<string> happyStrings;
-         
-        generateHappyStrings(n, currentString, happyStrings);
-
-        
-        if (happyStrings.size() < k) return "";
-
-         
-        sort(happyStrings.begin(), happyStrings.end());
-
-        return happyStrings[k - 1];
-    }
-
-private:
-    void generateHappyStrings(int n, string currentString,
-                              vector<string> &happyStrings) {
-        
-        if (currentString.size() == n) {
-            happyStrings.push_back(currentString);
-            return;
+        int perCharCount=pow(2,n-1);
+        if(3*perCharCount<k)return "";
+        string ans="";
+        if(k<=perCharCount){
+            ans.push_back('a');
+        }else if(k<=2*perCharCount){
+            ans.push_back('b');
+            k-=perCharCount;
+        }else{
+            ans.push_back('c');
+            k-=2*perCharCount;
         }
-
-         
-        for (char currentChar = 'a'; currentChar <= 'c'; currentChar++) {
-            
-            if (currentString.size() > 0 && currentString.back() == currentChar)
-                continue;
-
-            
-            generateHappyStrings(n, currentString + currentChar, happyStrings);
+        vector<string>options{"bc","ac","ab"};
+        for(int i=1;i<n;i++){
+            perCharCount/=2;
+            // perCharCount=pow(2,n-i-1);
+            string option=options[ans.back()-'a'];
+            if(k<=perCharCount){
+                ans.push_back(option[0]);
+            }else{
+                ans.push_back(option[1]);
+                k-=perCharCount;
+            }
         }
+        return ans;
     }
 };
